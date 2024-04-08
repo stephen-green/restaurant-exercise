@@ -12,15 +12,15 @@ function App() {
       let lines = await readLines(file, {skipEmpty: true});
       if (lines.length) {
         // Skip first line, assumed to be header.
-        let header = lines[0];
-        let rows = lines.slice(1);
+        let header = splitCSV(lines[0]);
+        let rows = lines.slice(1).map(line => splitCSV(line));
         
-        restaurants = rows;
+        restaurants = rows.map(row => row[0]);
       }
     }
     
     setRestaurants(restaurants);
-  }
+  } 
   
   async function readLines(file, {skipEmpty = false} = {}) {
     let lines = splitLines(await readText(file));
@@ -37,6 +37,15 @@ function App() {
   
   function splitLines(text) {
     return text.split(/\r\n|\n|\r/g);
+  }
+  
+  function splitCSV(text, {separator = ',', trimWhitespace = true} = {}) {
+    let fields = text.split(separator);
+    if (trimWhitespace) {
+      fields = fields.map(text => text.trim());
+    }
+    
+    return fields;
   }
   
   return (

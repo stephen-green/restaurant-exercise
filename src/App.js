@@ -5,10 +5,24 @@ import './App.css';
 function App() {
   const [restaurants, setRestaurants] = useState([]);
   
-  function handleRestaurantFileSelected(e) {
-    let reader = new FileReader();
-    reader.addEventListener('load', e2 => setRestaurants(reader.result.split(/\r\n|\n|\r/g).slice(1))); // Skip first line, assumed to be header.
-    reader.readAsText(e.target.files[0]);
+  async function handleRestaurantFileSelected(e) {
+    setRestaurants(await readLines(e.target.files[0]).slice(1)); // Skip first line, assumed to be header.
+  }
+  
+  async function readLines(file) {
+    return splitLines(await readText(file));
+  }
+  
+  async function readText(file) {
+    return await new Promise((resolve, reject) => {
+      let reader = new FileReader();
+      reader.addEventListener('load', e => resolve(reader.result));
+      reader.readAsText(file);
+    });
+  }
+  
+  function splitLines(text) {
+    return text.split(/\r\n|\n|\r/g);
   }
   
   return (

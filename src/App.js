@@ -5,47 +5,67 @@ import './App.css';
 function App() {
   const [restaurants, setRestaurants] = useState([]);
   
+  class TextFileReader {
+    async readLines(file, {skipEmpty = false} = {}) {
+      let lines = this.#splitLines(await this.readAll(file));
+      return skipEmpty ? lines.filter(text => text) : lines;
+    }
+    
+    async readAll(file) {
+      return await new Promise((resolve, reject) => {
+        let reader = new FileReader();
+        reader.addEventListener('load', e => resolve(reader.result));
+        reader.readAsText(file);
+      });
+    }
+    
+    #splitLines(text) {
+      return text.split(/\r\n|\n|\r/g);
+    }
+  }
+  
+  class CSVFileReader {
+    constructor({separator = ',', trimWhitespace = true} = {}) {
+      this.separator = separator;
+      this.trimWhitespace = trimWhitespace;
+    }
+    
+    async readAll(file) {
+      let header = null;
+      let rows = [];
+      
+      let lines = await new TextFileReader().readLines(file, {skipEmpty: true});
+      if (lines.length) {
+        // Skip first line, assumed to be header.
+        header = this.#splitCSV(lines[0]);
+        rows = lines.slice(1).map(line => this.#splitCSV(line));
+      }
+      
+      return {
+        header: header,
+        rows: rows
+      }
+    }
+    
+    #splitCSV(text) {
+      let fields = text.split(this.separator);
+      if (this.trimWhitespace) {
+        fields = fields.map(text => text.trim());
+      }
+      
+      return fields;
+    }
+  }
+  
   async function handleRestaurantFileSelected(e) {
     let restaurants = [];
     if (e.target.files.length) {
       let file = e.target.files[0];
-      let lines = await readLines(file, {skipEmpty: true});
-      if (lines.length) {
-        // Skip first line, assumed to be header.
-        let header = splitCSV(lines[0]);
-        let rows = lines.slice(1).map(line => splitCSV(line));
-        
-        restaurants = rows.map(row => row[0]);
-      }
+      let document = await new CSVFileReader().readAll(file);
+      restaurants = document.rows.map(row => row[0]);
     }
     
     setRestaurants(restaurants);
-  } 
-  
-  async function readLines(file, {skipEmpty = false} = {}) {
-    let lines = splitLines(await readText(file));
-    return skipEmpty ? lines.filter(text => text) : lines;
-  }
-  
-  async function readText(file) {
-    return await new Promise((resolve, reject) => {
-      let reader = new FileReader();
-      reader.addEventListener('load', e => resolve(reader.result));
-      reader.readAsText(file);
-    });
-  }
-  
-  function splitLines(text) {
-    return text.split(/\r\n|\n|\r/g);
-  }
-  
-  function splitCSV(text, {separator = ',', trimWhitespace = true} = {}) {
-    let fields = text.split(separator);
-    if (trimWhitespace) {
-      fields = fields.map(text => text.trim());
-    }
-    
-    return fields;
   }
   
   return (

@@ -6,11 +6,25 @@ function App() {
   const [restaurants, setRestaurants] = useState([]);
   
   async function handleRestaurantFileSelected(e) {
-    setRestaurants(await readLines(e.target.files[0]).slice(1)); // Skip first line, assumed to be header.
+    let restaurants = [];
+    if (e.target.files.length) {
+      let file = e.target.files[0];
+      let lines = await readLines(file, {skipEmpty: true});
+      if (lines.length) {
+        // Skip first line, assumed to be header.
+        let header = lines[0];
+        let rows = lines.slice(1);
+        
+        restaurants = rows;
+      }
+    }
+    
+    setRestaurants(restaurants);
   }
   
-  async function readLines(file) {
-    return splitLines(await readText(file));
+  async function readLines(file, {skipEmpty = false} = {}) {
+    let lines = splitLines(await readText(file));
+    return skipEmpty ? lines.filter(text => text) : lines;
   }
   
   async function readText(file) {

@@ -11,7 +11,7 @@ function App() {
     let restaurants = [];
     if (e.target.files.length) {
       let file = e.target.files[0];
-      let document = await new CSVFileReader().readAll(file);
+      let document = await new CSVFileReader({enableHeader: true}).readAll(file);
       restaurants = document.rows.map(row => row[0]);
     }
     

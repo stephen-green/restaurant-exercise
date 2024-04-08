@@ -1,9 +1,10 @@
 import { TextFileReader } from './TextFileReader.js'
 
 export class CSVFileReader {
-  constructor({separator = ',', trimWhitespace = true} = {}) {
+  constructor({separator = ',', trimWhitespace = true, enableHeader = false} = {}) {
     this.separator = separator;
     this.trimWhitespace = trimWhitespace;
+    this.enableHeader = enableHeader;
   }
   
   async readAll(file) {
@@ -12,9 +13,13 @@ export class CSVFileReader {
     
     let lines = await new TextFileReader().readLines(file, {skipEmpty: true});
     if (lines.length) {
-      // Skip first line, assumed to be header.
-      header = this.#splitCSV(lines[0]);
-      rows = lines.slice(1).map(line => this.#splitCSV(line));
+      if (this.enableHeader) {
+        // Skip first line, assumed to be header.
+        header = this.#splitCSV(lines[0]);
+        rows = lines.slice(1).map(line => this.#splitCSV(line));
+      } else {
+        rows = lines.map(line => this.#splitCSV(line));
+      }
     }
     
     return {

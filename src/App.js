@@ -6,7 +6,7 @@ import { CSVFileReader } from './classes/CSVFileReader.js'
 import { MetricNormalizer } from './classes/MetricNormalizer.js'
 import { MinToMaxNormalizer } from './classes/MinToMaxNormalizer.js'
 import { MaxToMinNormalizer } from './classes/MaxToMinNormalizer.js'
-import { ErrorFromTargetNormalizer } from './classes/ErrorFromTargetNormalizer.js'
+import { AbsoluteValueNormalizer } from './classes/AbsoluteValueNormalizer.js'
 import { Metric } from './classes/Metric.js'
 import { RestaurantDataRow } from './classes/RestaurantDataRow.js'
 import { RestaurantDataSet } from './classes/RestaurantDataSet.js'
@@ -41,7 +41,7 @@ function App() {
     let metrics = [
       {columnName: 'Net Sales', normalizer: new MinToMaxNormalizer(), csvIndex: 1},
       {columnName: 'Transaction Count', normalizer: new MinToMaxNormalizer(), csvIndex: 2},
-      {columnName: 'Cash Over/Short', normalizer: new ErrorFromTargetNormalizer(0), csvIndex: 3},
+      {columnName: 'Cash Over/Short', normalizer: new AbsoluteValueNormalizer(0), csvIndex: 3},
       {columnName: 'Beverage Count', normalizer: new MinToMaxNormalizer(), csvIndex: 4},
       {columnName: 'Speed of Service Total Seconds', normalizer: new MaxToMinNormalizer(), csvIndex: 5},
       {columnName: 'Discount Total Amount', normalizer: new MaxToMinNormalizer(), csvIndex: 6}

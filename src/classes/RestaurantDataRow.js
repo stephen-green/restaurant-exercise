@@ -1,3 +1,5 @@
+import { Metric } from './Metric.js'
+
 /*
  * A restaurant with metrics describing its performance.
  */

@@ -1,3 +1,5 @@
+import { MetricNormalizer } from './MetricNormalizer.js'
+
 /*
  * 0 = (worst, lowest value), 1 = (best, highest value)
  */

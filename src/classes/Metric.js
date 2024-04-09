@@ -1,3 +1,5 @@
+import { MetricNormalizer } from './MetricNormalizer.js'
+
 /*
  * A measure of how "good" or "bad" each value is in a list of values
  */

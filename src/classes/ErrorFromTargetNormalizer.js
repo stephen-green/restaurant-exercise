@@ -1,3 +1,5 @@
+import { MetricNormalizer } from './MetricNormalizer.js'
+
 /*
  * 0 = (worst, furthest from target), 1 = (best, right on target)
  */

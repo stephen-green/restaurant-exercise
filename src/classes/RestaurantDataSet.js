@@ -1,3 +1,6 @@
+import { RestaurantDataRow } from './RestaurantDataRow.js'
+import { Metric } from './Metric.js'
+
 /*
  * A list of restaurants, each with metrics describing their performance.
  */

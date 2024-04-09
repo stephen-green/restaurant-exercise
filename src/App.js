@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { Collapsible } from './components/Collapsible.js'
+
 import { CSVFileReader } from './classes/CSVFileReader.js'
 import { MetricNormalizer } from './classes/MetricNormalizer.js'
 import { MinToMaxNormalizer } from './classes/MinToMaxNormalizer.js'
@@ -11,7 +13,7 @@ import { RestaurantDataSet } from './classes/RestaurantDataSet.js'
 
 import './App.css';
 
-function App() {
+function App() { 
   const scoreDisplayPrecision = 3;
   
   const [restaurants, setRestaurants] = useState([]);
@@ -69,18 +71,30 @@ function App() {
     <>
       <section>
         <h1>Restaurant File Import</h1>
-        <input id="restaurant-file-selector" type="file" accept=".csv" onChange={handleRestaurantFileSelected} />
+        <div className="content">
+          <label htmlFor="restaurant-file-selector" className="button-label">Select File</label>
+          <input id="restaurant-file-selector" type="file" accept=".csv" onChange={handleRestaurantFileSelected} />
+        </div>
       </section>
       
-      <section class="restaurant-list">
+      <section className="restaurant-list">
+      {restaurants.length > 0 && (<>
         <h1>Best Restaurants</h1>
-        <ol>
-        {restaurants.map(r =>
-          <li class="restaurant">
-            <div class="restaurant-header"><div class="score">{r.score.toFixed(scoreDisplayPrecision)}</div>{r.restaurant.locationName}</div><ul class="restaurant-footer">{metrics.map(m => <li><div class="metric"><div class="score">{r.getScore(m).toFixed(scoreDisplayPrecision)}</div>{m.name}</div></li>)}</ul>
-          </li>
-        )}
-        </ol>
+        <div className="content">
+          <ol>
+          {restaurants.map((r, i) =>
+            <li className="restaurant" key={i}><Collapsible>
+              <div className="restaurant-header"><div className="score">{r.score.toFixed(scoreDisplayPrecision)}</div>{r.restaurant.locationName}</div>
+              <ul className="restaurant-footer">
+              {metrics.map((m, i) =>
+                <li key={i}><div className="metric"><div className="score">{r.getScore(m).toFixed(scoreDisplayPrecision)}</div>{m.name}</div></li>
+              )}
+              </ul>
+            </Collapsible></li>
+          )}
+          </ol>
+        </div>
+      </>)}
       </section>
     </>
   );

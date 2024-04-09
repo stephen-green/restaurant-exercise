@@ -1,6 +1,13 @@
 import { useState } from 'react';
 
-import { CSVFileReader } from './classes/CSVFileReader'
+import { CSVFileReader } from './classes/CSVFileReader.js'
+import { MetricNormalizer } from './classes/MetricNormalizer.js'
+import { MinToMaxNormalizer } from './classes/MinToMaxNormalizer.js'
+import { MaxToMinNormalizer } from './classes/MaxToMinNormalizer.js'
+import { ErrorFromTargetNormalizer } from './classes/ErrorFromTargetNormalizer.js'
+import { Metric } from './classes/Metric.js'
+import { RestaurantDataRow } from './classes/RestaurantDataRow.js'
+import { RestaurantDataSet } from './classes/RestaurantDataSet.js'
 
 import './App.css';
 
@@ -11,11 +18,42 @@ function App() {
     let restaurants = [];
     if (e.target.files.length) {
       let file = e.target.files[0];
-      let document = await new CSVFileReader({enableHeader: true}).readAll(file);
-      restaurants = document.rows.map(row => row[0]);
+      let restaurantData = await loadRestaurantDataFile(file);
+      restaurants = restaurantData.getBestRestaurants().map(r => r.restaurant.locationName);
     }
     
     setRestaurants(restaurants);
+  }
+  
+  async function loadRestaurantDataFile(file) {
+    let document = await new CSVFileReader({enableHeader: true}).readAll(file);
+    let metrics = [
+      {normalizer: new MinToMaxNormalizer(), columnName: 'Net Sales', csvIndex: 1},
+      {normalizer: new MinToMaxNormalizer(), columnName: 'Transaction Count', csvIndex: 2},
+      {normalizer: new ErrorFromTargetNormalizer(0), columnName: 'Cash Over/Short', csvIndex: 3},
+      {normalizer: new MinToMaxNormalizer(), columnName: 'Beverage Count', csvIndex: 4},
+      {normalizer: new MaxToMinNormalizer(), columnName: 'Speed of Service Total Seconds', csvIndex: 5},
+      {normalizer: new MaxToMinNormalizer(), columnName: 'Discount Total Amount', csvIndex: 6}
+    ].map(m => ({
+      metric: new Metric(m.normalizer, m.columnName),
+      csvIndex: m.csvIndex
+    }));
+    let restaurantData = document.rows.map(row => {
+      let locationName = row[0];      
+      let restaurant = new RestaurantDataRow(locationName);
+      for (const metric of metrics) {
+        if (metric.csvIndex >= row.length) {
+          throw new Error(`In CSV file, restaurant "${locationName}" is missing metric "${metric.metric.name}" in column #${metric.csvIndex + 1}.`);
+        }
+        
+        let value = parseFloat(row[metric.csvIndex]);
+        restaurant.setValue(metric.metric, value);
+      }
+      
+      return restaurant;
+    });
+    
+    return new RestaurantDataSet(restaurantData, metrics.map(m => m.metric));
   }
   
   return (

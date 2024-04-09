@@ -22,6 +22,13 @@ export class RestaurantDataSet {
   }
   
   /*
+   * Get all restaurant metrics associated with this data set (the metrics, not the values).
+   */
+  get metrics(): Metric[] {
+    return this.#metrics;
+  }
+  
+  /*
    * Get all restaurants in order from best to worst, as scored by taking the normalized average of all metrics (equally weighted).
    */
   getBestRestaurants(): RestaurantScore[] {

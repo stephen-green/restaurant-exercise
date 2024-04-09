@@ -12,17 +12,23 @@ import { RestaurantDataSet } from './classes/RestaurantDataSet.js'
 import './App.css';
 
 function App() {
+  const scoreDisplayPrecision = 3;
+  
   const [restaurants, setRestaurants] = useState([]);
+  const [metrics, setMetrics] = useState([]);
   
   async function handleRestaurantFileSelected(e) {
     let restaurants = [];
+    let metrics = [];
     if (e.target.files.length) {
       let file = e.target.files[0];
-      let restaurantData = await loadRestaurantDataFile(file);
-      restaurants = restaurantData.getBestRestaurants().map(r => r.restaurant.locationName);
+      let data = await loadRestaurantDataFile(file);
+      restaurants = data.getBestRestaurants();
+      metrics = data.metrics;
     }
     
     setRestaurants(restaurants);
+    setMetrics(metrics);
   }
   
   /*
@@ -66,9 +72,15 @@ function App() {
         <input id="restaurant-file-selector" type="file" accept=".csv" onChange={handleRestaurantFileSelected} />
       </section>
       
-      <section>
+      <section class="restaurant-list">
         <h1>Best Restaurants</h1>
-        <ul>{restaurants.map(restaurant => <li>{restaurant}</li>)}</ul>
+        <ol>
+        {restaurants.map(r =>
+          <li class="restaurant">
+            <div class="restaurant-header"><div class="score">{r.score.toFixed(scoreDisplayPrecision)}</div>{r.restaurant.locationName}</div><ul class="restaurant-footer">{metrics.map(m => <li><div class="metric"><div class="score">{r.getScore(m).toFixed(scoreDisplayPrecision)}</div>{m.name}</div></li>)}</ul>
+          </li>
+        )}
+        </ol>
       </section>
     </>
   );

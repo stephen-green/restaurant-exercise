@@ -1,1 +1,41 @@
+.restaurant-list ol {
+    list-style-type: none;
+    padding-left: 0;
+}
 
+.restaurant-list ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.restaurant-list .score {
+    display: inline-block;
+    background-color: lightgray;
+    width: 3em;
+    padding: 5px 0;
+    margin-right: 6px;
+    border-radius: 3px;
+    text-align: center;
+    font-size: smaller;
+}
+
+.restaurant-list .restaurant-header {
+    padding: 6px;
+}
+
+.restaurant-list .metric {
+    padding: 6px;
+    margin-left: 23px;
+}
+
+.restaurant-list .restaurant:hover {
+    background-color: #eeeeee;
+}
+
+.restaurant-list .restaurant.collapsed .restaurant-footer {
+    display: none;
+}
+
+.restaurant-list .restaurant.expanded .restaurant-footer {
+    display: inherit;
+}

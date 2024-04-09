@@ -31,12 +31,12 @@ function App() {
   async function loadRestaurantDataFile(file): Promise<RestaurantDataSet> {
     let document = await new CSVFileReader({enableHeader: true}).readAll(file);
     let metrics = [
-      {normalizer: new MinToMaxNormalizer(), columnName: 'Net Sales', csvIndex: 1},
-      {normalizer: new MinToMaxNormalizer(), columnName: 'Transaction Count', csvIndex: 2},
-      {normalizer: new ErrorFromTargetNormalizer(0), columnName: 'Cash Over/Short', csvIndex: 3},
-      {normalizer: new MinToMaxNormalizer(), columnName: 'Beverage Count', csvIndex: 4},
-      {normalizer: new MaxToMinNormalizer(), columnName: 'Speed of Service Total Seconds', csvIndex: 5},
-      {normalizer: new MaxToMinNormalizer(), columnName: 'Discount Total Amount', csvIndex: 6}
+      {columnName: 'Net Sales', normalizer: new MinToMaxNormalizer(), csvIndex: 1},
+      {columnName: 'Transaction Count', normalizer: new MinToMaxNormalizer(), csvIndex: 2},
+      {columnName: 'Cash Over/Short', normalizer: new ErrorFromTargetNormalizer(0), csvIndex: 3},
+      {columnName: 'Beverage Count', normalizer: new MinToMaxNormalizer(), csvIndex: 4},
+      {columnName: 'Speed of Service Total Seconds', normalizer: new MaxToMinNormalizer(), csvIndex: 5},
+      {columnName: 'Discount Total Amount', normalizer: new MaxToMinNormalizer(), csvIndex: 6}
     ].map(m => ({
       metric: new Metric(m.normalizer, m.columnName),
       csvIndex: m.csvIndex

@@ -1,3 +1,6 @@
+/*
+ * 0 = (worst, lowest value), 1 = (best, highest value)
+ */
 export class MinToMaxNormalizer implements MetricNormalizer {
   normalize(range: number[]): number[] {
     var best = this.getBest(range);
@@ -10,11 +13,11 @@ export class MinToMaxNormalizer implements MetricNormalizer {
     }
   }
   
-  getBest(range: number[]) {
+  getBest(range: number[]): number {
     return Math.max(...range);
   }
   
-  getWorst(range: number[]) {
+  getWorst(range: number[]): number {
     return Math.min(...range);
   }
 }

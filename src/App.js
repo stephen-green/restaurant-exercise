@@ -25,7 +25,10 @@ function App() {
     setRestaurants(restaurants);
   }
   
-  async function loadRestaurantDataFile(file) {
+  /*
+   * Load a list of restaurants from a CSV data file, along with their corresponding metrics.
+   */
+  async function loadRestaurantDataFile(file): Promise<RestaurantDataSet> {
     let document = await new CSVFileReader({enableHeader: true}).readAll(file);
     let metrics = [
       {normalizer: new MinToMaxNormalizer(), columnName: 'Net Sales', csvIndex: 1},

@@ -1,11 +1,14 @@
 import { MinToMaxNormalizer } from './MinToMaxNormalizer.js'
 
+/*
+ * 0 = (worst, highest value), 1 = (best, lowest value)
+ */
 export class MaxToMinNormalizer extends MinToMaxNormalizer {
-  getBest(range: number[]) {
+  getBest(range: number[]): number {
     return Math.min(...range);
   }
   
-  getWorst(range: number[]) {
+  getWorst(range: number[]): number {
     return Math.max(...range);
   }
 }
